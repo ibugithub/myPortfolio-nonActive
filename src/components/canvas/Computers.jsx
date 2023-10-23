@@ -1,37 +1,54 @@
-import  { Suspense, useEffect, useState} from 'react'
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Preload, useGLTF } from '@react-three/drei'
-import CanvasLoader from '../Loader'
+import React, { Suspense, useEffect, useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Preload, useGLTF } from "@react-three/drei";
+import CanvasLoader from "../Loader";
 
-const Computers = () => {
-  const computer = useGLTF('./desktop_pc/scene.gltf')
+const Computers = ({ isMobile }) => {
+  const computer = useGLTF("./pc/oldPc.glb");
   return (
     <mesh>
       <hemisphereLight intensity={0.15} groundColor='black' />
+      <ambientLight intensity={.65} />
       <spotLight
-        position={[-20, 50, 10]}
+        position={[0, 50, 10]}
         angle={0.12}
         penumbra={1}
         intensity={1}
         castShadow
         shadow-mapSize={1024}
       />
-      <pointLight intensity={1} />
       <primitive
         object={computer.scene}
-        rotation={[-0.01, -0.2, -0.1]}
+        scale={isMobile ? .1 : .17}
+        position={isMobile ? [0, -3, -2.2] : [0, -2.5, 0]}
+        rotation={[0, .6, 0]}
       />
     </mesh>
-  )
-}
+  );
+};
 
-const computerCanvas = () => {
+const ComputersCanvas = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 500px)");
+    setIsMobile(mediaQuery.matches);
+
+    const handleMediaQueryChange = (event) => {
+      setIsMobile(event.matches);
+    };
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+    return () => {
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
+    };
+  }, []);
+
   return (
     <Canvas
       frameloop='demand'
       shadows
       dpr={[1, 2]}
-      camera={{ position: [20, 3, 5], fov: 25 }}
+      camera={{ position: [0, 18, 0], fov: 20 }}
       gl={{ preserveDrawingBuffer: true }}
     >
       <Suspense fallback={<CanvasLoader />}>
@@ -40,12 +57,12 @@ const computerCanvas = () => {
           maxPolarAngle={Math.PI / 2}
           minPolarAngle={Math.PI / 2}
         />
-        <Computers />
+        <Computers isMobile={isMobile} />
       </Suspense>
 
       <Preload all />
     </Canvas>
-  )
-}
+  );
+};
 
-export default computerCanvas
+export default ComputersCanvas;
