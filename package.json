@@ -12,6 +12,8 @@
     "@emailjs/browser": "^3.10.0",
     "@react-three/drei": "^9.56.24",
     "@react-three/fiber": "^8.11.1",
+    "@splinetool/react-spline": "^2.2.6",
+    "@splinetool/runtime": "^0.9.489",
     "framer-motion": "^9.0.7",
     "maath": "^0.5.2",
     "react": "^18.2.0",
